@@ -1,0 +1,80 @@
+version: '3'
+
+services:
+  hadoop1:
+    image: lifsh/hadoop
+    hostname: hadoop1
+    ports: 
+      - 8088:8088
+    environment:
+      NODE_TYPE: master
+      NAMENODE_HOST: hadoop1
+      HDFS_REPLICATION: 2
+      RM_HOST: hadoop1
+      SLAVES: 'hadoop2\nhadoop3\nhadoop4'
+    volumes:
+      - hadoop1_data:/tmp/hadoop-root
+    depends_on:
+      - hadoop2
+      - hadoop3
+      - hadoop4
+  hadoop2:
+    image: lifsh/hadoop
+    hostname: hadoop2
+    environment:
+      NODE_TYPE: slave
+      NAMENODE_HOST: hadoop1
+      HDFS_REPLICATION: 2
+      RM_HOST: hadoop1
+      NODE_MEMORY_MB: 2048
+      NODE_CPU_VCORES: 2
+    volumes:
+      - hadoop2_data:/tmp/hadoop-root
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2g
+  hadoop3:
+    image: lifsh/hadoop
+    hostname: hadoop3
+    environment:
+      NODE_TYPE: slave
+      NAMENODE_HOST: hadoop1
+      HDFS_REPLICATION: 2
+      RM_HOST: hadoop1
+      NODE_MEMORY_MB: 2048
+      NODE_CPU_VCORES: 2
+    volumes:
+      - hadoop3_data:/tmp/hadoop-root
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2g
+  hadoop4:
+    image: lifsh/hadoop
+    hostname: hadoo4
+    environment:
+      NODE_TYPE: slave
+      NAMENODE_HOST: hadoop1
+      HDFS_REPLICATION: 2
+      RM_HOST: hadoop1
+      NODE_MEMORY_MB: 2048
+      NODE_CPU_VCORES: 2
+    volumes:
+      - hadoop4_data:/tmp/hadoop-root
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2g
+volumes:
+  hadoop1_data:
+    driver: local
+  hadoop2_data:
+    driver: local
+  hadoop3_data:
+    driver: local
+  hadoop4_data:
+    driver: local

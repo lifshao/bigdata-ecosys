@@ -1,0 +1,21 @@
+FROM openjdk:8
+
+WORKDIR /
+ADD ./kafka_2.13-2.6.0.tgz ./
+WORKDIR /kafka_2.13-2.6.0
+
+ENV ZK_SERVER=localhost:2181
+ENV KAFKA_HOST=localhost
+ENV KAFKA_PORT=9092
+ENV KAFKA_LOG_DIR==/tmp/kafka-logs
+ENV BROKER_ID=-1
+ENV REPLICA_FACTOR=1
+
+CMD ./bin/kafka-server-start.sh config/server.properties \
+    --override broker.id="$BROKER_ID" \
+    --override zookeeper.connect="$ZK_SERVER" \
+    --override listeners=PLAINTEXT://0.0.0.0:$KAFKA_PORT \
+    --override advertised.listeners=PLAINTEXT://$KAFKA_HOST:$KAFKA_PORT \
+    --override log.dirs="KAFKA_LOG_DIR" \
+    --override default.replication.factor=$REPLICA_FACTOR \
+    --override offsets.topic.replication.factor=$REPLICA_FACTOR
